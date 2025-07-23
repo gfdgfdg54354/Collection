@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "937357835629",
+    "project_id": "collectionapp-f5634",
+    "storage_bucket": "collectionapp-f5634.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:937357835629:android:353d52d62a9c4494e9ae64",
+        "android_client_info": {
+          "package_name": "com.collection.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6rHgyKRyRRcJDHJHlS6HcI8BIijXrgX4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
