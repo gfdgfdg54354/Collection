@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "Kollekciya",
-    "slug": "kollekciya",
+    "name": "Коллекция",
+    "slug": "COLLECTIONapp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "splash": {
       "image": "./assets/images/splash-icon.png",
       "resizeMode": "contain",
@@ -15,14 +15,30 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.rork.kollekciya"
+      "bundleIdentifier": "com.collection.app"
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "package": "com.rork.kollekciya"
+      "package": "com.collection.app",
+      "jsEngine": "jsc",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [
+            {
+              "scheme": "myapp"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ],
+      "permissions": [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.INTERNET"
+      ]
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
@@ -33,7 +49,9 @@
         {
           "origin": "https://rork.com/"
         }
-      ]
+      ],
+      "expo-secure-store",
+      "expo-file-system"
     ],
     "experiments": {
       "typedRoutes": true
@@ -43,7 +61,7 @@
         "origin": "https://rork.com/"
       },
       "eas": {
-        "projectId": "6bf94882-ad15-4bc7-b537-44af8573a847"
+        "projectId": "6acef780-9018-40ab-88ff-52bd4862eefe"
       }
     }
   }

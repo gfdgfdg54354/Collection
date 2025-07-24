@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight, Edit, Trash2 } from 'lucide-react-native';
 import useCollectionStore from '@/store/collection-store';
 import ConfirmationDialog from '@/components/ConfirmationDialog';
 import ImageViewer from '@/components/ImageViewer';
+import { POSTCARD_SUBCATEGORIES, STAMP_CANCELLATION_SUBCATEGORIES } from '@/constants/categories';
 import Colors from '@/constants/colors';
 
 export default function ItemDetailsScreen() {
@@ -31,6 +32,15 @@ export default function ItemDetailsScreen() {
 
   const categoryName = categories.find(c => c.id === item.categoryId)?.name || '';
   const regionName = regions.find(r => r.id === item.regionId)?.name || '';
+
+  let subcategoryName = '';
+  if (item.subcategoryId) {
+    if (item.categoryId === 'postcards') {
+      subcategoryName = POSTCARD_SUBCATEGORIES.find(s => s.id === item.subcategoryId)?.name || '';
+    } else if (item.categoryId === 'stampCancellations') {
+      subcategoryName = STAMP_CANCELLATION_SUBCATEGORIES.find(s => s.id === item.subcategoryId)?.name || '';
+    }
+  }
 
   const handleEdit = () => {
     router.push(`/edit-item/${id}`);
@@ -62,77 +72,167 @@ export default function ItemDetailsScreen() {
     setImageViewerVisible(true);
   };
 
-  const renderCoinDetails = () => {
-    const coinItem = item as any;
-    return (
-      <View>
-        <DetailRow label="Вес" value={coinItem.weight} />
-        <DetailRow label="Гурт" value={coinItem.edge} />
-        <DetailRow label="Монетный двор" value={coinItem.mint} />
-        <DetailRow label="Тираж" value={coinItem.mintage} />
-        <DetailRow label="Металл" value={coinItem.metal} />
-        <DetailRow label="Диаметр" value={coinItem.diameter} />
-        <DetailRow label="Толщина" value={coinItem.thickness} />
-        <DetailRow label="Номер по Краузе" value={coinItem.krauseNumber} />
-      </View>
-    );
-  };
-
-  const renderBanknoteDetails = () => {
-    const banknoteItem = item as any;
-    return (
-      <View>
-        <DetailRow label="Номинал" value={banknoteItem.denomination} />
-        <DetailRow label="Страна" value={banknoteItem.country} />
-        <DetailRow label="Размер банкноты" value={banknoteItem.size} />
-        <DetailRow label="Введение в обращение" value={banknoteItem.circulationDate} />
-        <DetailRow label="Номер по Краузе" value={banknoteItem.krauseNumber} />
-        <DetailRow label="Номер по ВИК" value={banknoteItem.vikNumber} />
-        <DetailRow label="Модификация" value={banknoteItem.modification} />
-        <DetailRow
-          label="Материал"
-          value={banknoteItem.material === 'paper' ? 'Бумага' : 'Пластик'}
-        />
-      </View>
-    );
-  };
-
-  const renderBadgeDetails = () => {
-    const badgeItem = item as any;
-    return (
-      <View>
-        <DetailRow label="Клеймо" value={badgeItem.stamp} />
-        <DetailRow label="Металл" value={badgeItem.metal} />
-        <DetailRow label="Эмаль" value={badgeItem.enamel} />
-        <DetailRow label="Крепление" value={badgeItem.mount} />
-      </View>
-    );
-  };
-
-  const renderStampDetails = () => {
-    const stampItem = item as any;
-    return (
-      <View>
-        <DetailRow label="Номер по каталогу" value={stampItem.catalogNumber} />
-        <DetailRow label="Способ печати" value={stampItem.printMethod} />
-        <DetailRow label="Перфорация" value={stampItem.perforation} />
-        <DetailRow label="Формат" value={stampItem.format} />
-        <DetailRow label="Тираж" value={stampItem.mintage} />
-        <DetailRow label="Бумага" value={stampItem.paper} />
-      </View>
-    );
-  };
-
   const renderCategorySpecificDetails = () => {
+    const itemAny = item as any;
+
     switch (item.categoryId) {
       case 'coins':
-        return renderCoinDetails();
+        return (
+          <>
+            <DetailRow label="Вес" value={itemAny.weight} />
+            <DetailRow label="Гурт" value={itemAny.edge} />
+            <DetailRow label="Монетный двор" value={itemAny.mint} />
+            <DetailRow label="Тираж" value={itemAny.mintage} />
+            <DetailRow label="Металл" value={itemAny.metal} />
+            <DetailRow label="Диаметр" value={itemAny.diameter} />
+            <DetailRow label="Толщина" value={itemAny.thickness} />
+            <DetailRow label="Номер по Краузе" value={itemAny.krauseNumber} />
+          </>
+        );
       case 'banknotes':
-        return renderBanknoteDetails();
+        return (
+          <>
+            <DetailRow label="Номинал" value={itemAny.denomination} />
+            <DetailRow label="Страна" value={itemAny.country} />
+            <DetailRow label="Размер банкноты" value={itemAny.size} />
+            <DetailRow label="Введение в обращение" value={itemAny.circulationDate} />
+            <DetailRow label="Номер по Краузе" value={itemAny.krauseNumber} />
+            <DetailRow label="Номер по ВИК" value={itemAny.vikNumber} />
+            <DetailRow label="Модификация" value={itemAny.modification} />
+            <DetailRow
+              label="Материал"
+              value={itemAny.material === 'paper' ? 'Бумага' : itemAny.material === 'plastic' ? 'Пластик' : ''}
+            />
+          </>
+        );
       case 'badges':
-        return renderBadgeDetails();
+        return (
+          <>
+            <DetailRow label="Клеймо" value={itemAny.stamp} />
+            <DetailRow label="Металл" value={itemAny.metal} />
+            <DetailRow label="Эмаль" value={itemAny.enamel} />
+            <DetailRow label="Крепление" value={itemAny.mount || itemAny.fastener} />
+          </>
+        );
       case 'stamps':
-        return renderStampDetails();
+        return (
+          <>
+            <DetailRow label="Номер по каталогу" value={itemAny.catalogNumber} />
+            <DetailRow label="Способ печати" value={itemAny.printMethod || itemAny.printType} />
+            <DetailRow label="Перфорация" value={itemAny.perforation} />
+            <DetailRow label="Формат" value={itemAny.format} />
+            <DetailRow label="Тираж" value={itemAny.mintage} />
+            <DetailRow label="Бумага" value={itemAny.paper || itemAny.paperType} />
+          </>
+        );
+      case 'watches':
+        return (
+          <>
+            <DetailRow label="Фирма" value={itemAny.brand} />
+            <DetailRow label="Пол" value={itemAny.gender === 'male' ? 'Мужские' : itemAny.gender === 'female' ? 'Женские' : ''} />
+            <DetailRow label="Тип" value={itemAny.type === 'quartz' ? 'Кварцевые' : itemAny.type === 'mechanical' ? 'Механические' : itemAny.type === 'hybrid' ? 'Гибридные' : ''} />
+            <DetailRow label="Металл" value={itemAny.metal} />
+            <DetailRow label="Диаметр" value={itemAny.diameter} />
+            <DetailRow label="Дополнительно" value={itemAny.additional} />
+          </>
+        );
+      case 'cameras':
+        return (
+          <>
+            <DetailRow label="Фирма" value={itemAny.brand} />
+            <DetailRow label="Серия" value={itemAny.series} />
+            <DetailRow label="Тип" value={itemAny.type} />
+            <DetailRow label="Мыльница" value={itemAny.soapbox || itemAny.compact} />
+            <DetailRow label="Формат пленки" value={itemAny.filmFormat} />
+            <DetailRow label="Объектив" value={itemAny.lens} />
+            <DetailRow label="Формат сенсора" value={itemAny.sensorFormat} />
+            <DetailRow label="Дополнительно" value={itemAny.additional} />
+          </>
+        );
+      case 'postcards':
+        return (
+          <>
+            <DetailRow label="Номер по каталогу АО Марка" value={itemAny.catalogNumber} />
+          </>
+        );
+      case 'porcelain':
+        return (
+          <>
+            <DetailRow label="Клеймо" value={itemAny.stamp} />
+          </>
+        );
+      case 'toys':
+      case 'kinderToys':
+        return (
+          <>
+            <DetailRow label="Завод/Фирма" value={itemAny.factory} />
+          </>
+        );
+      case 'mobilePhones':
+        return (
+          <>
+            <DetailRow label="Фирма" value={itemAny.brand} />
+            <DetailRow label="Модель" value={itemAny.model} />
+          </>
+        );
+      case 'cigarettePacks':
+        return (
+          <>
+            <DetailRow label="Фирма" value={itemAny.brand} />
+            <DetailRow label="Город" value={itemAny.city} />
+            <DetailRow label="Тип" value={itemAny.packType} />
+            <DetailRow label="Тип сигарет" value={itemAny.cigaretteType} />
+          </>
+        );
+      case 'samovars':
+        return (
+          <>
+            <DetailRow label="Производитель" value={itemAny.manufacturer} />
+            <DetailRow label="Металл" value={itemAny.metal} />
+            <DetailRow label="Тип" value={itemAny.type} />
+            <DetailRow label="Форма" value={itemAny.shape} />
+          </>
+        );
+      case 'loans':
+        return (
+          <>
+            <DetailRow label="Тема" value={itemAny.theme} />
+            <DetailRow label="Подпись" value={itemAny.signature} />
+            <DetailRow label="Вид" value={itemAny.type} />
+          </>
+        );
+      case 'lotteryTickets':
+        return (
+          <>
+            <DetailRow label="Фирма" value={itemAny.company} />
+            <DetailRow label="Тема" value={itemAny.theme} />
+            <DetailRow label="Редкость" value={itemAny.rarity} />
+          </>
+        );
+      case 'busts':
+        return (
+          <>
+            <DetailRow label="Тема" value={itemAny.theme} />
+            <DetailRow label="Жанр" value={itemAny.genre} />
+            <DetailRow label="Размер" value={itemAny.size} />
+            <DetailRow label="ФИО Скульптора" value={itemAny.sculptor} />
+            <DetailRow label="Материал" value={itemAny.material} />
+          </>
+        );
+      case 'bonds':
+        return (
+          <>
+            <DetailRow label="Вид" value={itemAny.type} />
+            <DetailRow label="Подпись" value={itemAny.signature} />
+          </>
+        );
+      case 'stocks':
+        return (
+          <>
+            <DetailRow label="Тема" value={itemAny.theme} />
+            <DetailRow label="Подписи" value={itemAny.signatures} />
+          </>
+        );
       default:
         return null;
     }
@@ -142,7 +242,10 @@ export default function ItemDetailsScreen() {
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Text style={styles.title}>{item.name}</Text>
-        <Text style={styles.subtitle}>{categoryName} - {regionName}</Text>
+        <Text style={styles.subtitle}>
+          {categoryName} - {regionName}
+          {subcategoryName ? ` - ${subcategoryName}` : ''}
+        </Text>
 
         <View style={styles.imageContainer}>
           {item.images && item.images.length > 0 ? (
@@ -200,25 +303,11 @@ export default function ItemDetailsScreen() {
 
         <View style={styles.detailsContainer}>
           <DetailRow label="Год выпуска" value={item.year} />
-
           {renderCategorySpecificDetails()}
-
+          {item.slab && <DetailRow label="СЛАБ" value={item.slab} />}
           <DetailRow label="Цена" value={item.price ? `${item.price} ₽` : ''} />
-
-          {item.description ? (
-            <View style={styles.descriptionContainer}>
-              <Text style={styles.detailLabel}>Описание:</Text>
-              <Text style={styles.descriptionText}>{item.description}</Text>
-            </View>
-          ) : null}
-
-          {item.note ? (
-            <View style={styles.descriptionContainer}>
-              <Text style={styles.detailLabel}>Заметка:</Text>
-              <Text style={styles.descriptionText}>{item.note}</Text>
-            </View>
-          ) : null}
-
+          <DetailRow label="Описание" value={item.description} />
+          <DetailRow label="Заметка" value={item.note} />
           <DetailRow label="Количество" value={item.quantity} />
           <DetailRow label="Состояние" value={item.condition} />
         </View>
@@ -262,7 +351,6 @@ export default function ItemDetailsScreen() {
 
 function DetailRow({ label, value }: { label: string; value?: string }) {
   if (!value) return null;
-
   return (
     <View style={styles.detailRow}>
       <Text style={styles.detailLabel}>{label}:</Text>
@@ -373,26 +461,20 @@ const styles = StyleSheet.create({
   detailRow: {
     flexDirection: 'row',
     marginBottom: 12,
+    alignItems: 'flex-start',
   },
   detailLabel: {
     fontSize: 16,
     fontWeight: '500',
     color: Colors.text,
     marginRight: 8,
-    flex: 1,
+    minWidth: 120,
+    flexShrink: 0,
   },
   detailValue: {
     fontSize: 16,
     color: Colors.textLight,
-    flex: 2,
-  },
-  descriptionContainer: {
-    marginBottom: 12,
-  },
-  descriptionText: {
-    fontSize: 16,
-    color: Colors.textLight,
-    marginTop: 4,
+    flex: 1,
   },
   buttonContainer: {
     flexDirection: 'row',

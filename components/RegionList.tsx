@@ -14,7 +14,15 @@ export default function RegionList() {
 
   const handleRegionPress = (regionId: string) => {
     setSelectedRegion(regionId);
-    router.push('/items');
+
+    // Special handling for postcards and stamp cancellations - go to subcategories
+    if (selectedCategory === 'postcards') {
+      router.push('/postcard-subcategories');
+    } else if (selectedCategory === 'stampCancellations') {
+      router.push('/stamp-subcategories');
+    } else {
+      router.push('/items');
+    }
   };
 
   const handleBackPress = () => {

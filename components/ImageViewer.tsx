@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { Modal, StyleSheet, View, Image, TouchableOpacity, Dimensions, ScrollView, Text } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Modal, StyleSheet, View, Dimensions, TouchableOpacity, Text, Image } from 'react-native';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react-native';
+import ImageZoom from 'react-native-image-pan-zoom';
 import Colors from '@/constants/colors';
 
 type ImageViewerProps = {
@@ -20,52 +21,40 @@ export default function ImageViewer({
   const screenWidth = Dimensions.get('window').width;
   const screenHeight = Dimensions.get('window').height;
 
-  React.useEffect(() => {
+  useEffect(() => {
     setCurrentIndex(initialIndex);
   }, [initialIndex, visible]);
 
   const goToPrevious = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-    }
+    if (currentIndex > 0) setCurrentIndex(currentIndex - 1);
   };
 
   const goToNext = () => {
-    if (currentIndex < images.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-    }
+    if (currentIndex < images.length - 1) setCurrentIndex(currentIndex + 1);
   };
 
   if (!visible || images.length === 0) return null;
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="fade"
-      onRequestClose={onClose}
-    >
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={styles.container}>
         <TouchableOpacity style={styles.closeButton} onPress={onClose}>
           <X size={24} color="white" />
         </TouchableOpacity>
 
-        <ScrollView
-          style={styles.scrollContainer}
-          contentContainerStyle={styles.imageContainer}
-          maximumZoomScale={5}
-          minimumZoomScale={1}
-          bouncesZoom={true}
-          showsHorizontalScrollIndicator={false}
-          showsVerticalScrollIndicator={false}
-          centerContent={true}
+        <ImageZoom
+          cropWidth={screenWidth}
+          cropHeight={screenHeight}
+          imageWidth={screenWidth}
+          imageHeight={screenHeight * 0.8}
+          minScale={1}
+          enableCenterFocus={true}
         >
           <Image
             source={{ uri: images[currentIndex] }}
-            style={[styles.image, { width: screenWidth, height: screenHeight * 0.8 }]}
-            resizeMode="contain"
+            style={{ width: screenWidth, height: screenHeight * 0.8, resizeMode: 'contain' }}
           />
-        </ScrollView>
+        </ImageZoom>
 
         {images.length > 1 && (
           <>
@@ -75,7 +64,6 @@ export default function ImageViewer({
                   <ChevronLeft size={30} color="white" />
                 </TouchableOpacity>
               )}
-
               {currentIndex < images.length - 1 && (
                 <TouchableOpacity style={[styles.navButton, styles.rightNavButton]} onPress={goToNext}>
                   <ChevronRight size={30} color="white" />
@@ -84,9 +72,7 @@ export default function ImageViewer({
             </View>
 
             <View style={styles.paginationContainer}>
-              <Text style={styles.paginationText}>
-                {currentIndex + 1} из {images.length}
-              </Text>
+              <Text style={styles.paginationText}>{currentIndex + 1} из {images.length}</Text>
               <View style={styles.dotsContainer}>
                 {images.map((_, index) => (
                   <TouchableOpacity
@@ -116,7 +102,7 @@ export default function ImageViewer({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.95)',
+    backgroundColor: 'rgba(0,0,0,0.95)',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -127,20 +113,7 @@ const styles = StyleSheet.create({
     zIndex: 10,
     padding: 12,
     borderRadius: 25,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-  },
-  scrollContainer: {
-    flex: 1,
-    width: '100%',
-  },
-  imageContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    minHeight: '100%',
-  },
-  image: {
-    resizeMode: 'contain',
+    backgroundColor: 'rgba(0,0,0,0.6)',
   },
   navigationContainer: {
     position: 'absolute',
@@ -157,7 +130,7 @@ const styles = StyleSheet.create({
   navButton: {
     padding: 15,
     borderRadius: 30,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    backgroundColor: 'rgba(0,0,0,0.6)',
   },
   leftNavButton: {
     alignSelf: 'center',
@@ -186,7 +159,7 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    backgroundColor: 'rgba(255,255,255,0.5)',
     marginHorizontal: 4,
   },
   activePaginationDot: {
@@ -203,7 +176,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   instructionText: {
-    color: 'rgba(255, 255, 255, 0.7)',
+    color: 'rgba(255,255,255,0.7)',
     fontSize: 14,
     textAlign: 'center',
   },
